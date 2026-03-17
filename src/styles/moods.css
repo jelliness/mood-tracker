@@ -1,0 +1,230 @@
+/* ── Mood Grid ──────────────────────────────────────────────────────────── */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 8px 12px;
+  background: var(--surface-2);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+  user-select: none;
+}
+.mood-btn:hover { background: var(--surface-hover); transform: translateY(-2px); }
+
+.mood-emoji {
+  font-size: 2.2rem;
+  line-height: 1;
+  display: block;
+  transition: transform var(--t-fast);
+  will-change: transform;
+}
+.mood-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  transition: color var(--t-fast);
+}
+
+/* ── Selected state ─────────────────────────────────────────────────────── */
+.mood-btn.selected { border-color: currentColor; }
+.mood-btn.selected .mood-label { color: var(--text-primary); }
+
+.mood-btn[data-mood="ecstatic"] { --mood-color: var(--mood-ecstatic); color: var(--mood-ecstatic); }
+.mood-btn[data-mood="happy"]    { --mood-color: var(--mood-happy);    color: var(--mood-happy);    }
+.mood-btn[data-mood="calm"]     { --mood-color: var(--mood-calm);     color: var(--mood-calm);     }
+.mood-btn[data-mood="meh"]      { --mood-color: var(--mood-meh);      color: var(--mood-meh);      }
+.mood-btn[data-mood="anxious"]  { --mood-color: var(--mood-anxious);  color: var(--mood-anxious);  }
+.mood-btn[data-mood="sad"]      { --mood-color: var(--mood-sad);      color: var(--mood-sad);      }
+.mood-btn[data-mood="frustrated"]{ --mood-color: var(--mood-frustrated); color: var(--mood-frustrated); }
+.mood-btn[data-mood="angry"]    { --mood-color: var(--mood-angry);    color: var(--mood-angry);    }
+
+.mood-btn.selected { background: color-mix(in srgb, var(--mood-color) 14%, var(--surface-2)); }
+
+/* ── Keyframe animations ────────────────────────────────────────────────── */
+
+/* 1. Ecstatic – multi-bounce with rotation */
+@keyframes ecstaticBounce {
+  0%   { transform: scale(1) rotate(0deg); }
+  15%  { transform: scale(1.5) rotate(-12deg); }
+  30%  { transform: scale(1.25) rotate(10deg); }
+  50%  { transform: scale(1.45) rotate(-6deg); filter: hue-rotate(60deg); }
+  70%  { transform: scale(1.2) rotate(5deg); filter: hue-rotate(120deg); }
+  85%  { transform: scale(1.35) rotate(-3deg); }
+  100% { transform: scale(1.3) rotate(0deg); filter: hue-rotate(0deg); }
+}
+
+/* 2. Happy – clean upward bounce + glow */
+@keyframes happyBounce {
+  0%   { transform: scale(1) translateY(0); }
+  35%  { transform: scale(1.35) translateY(-14px); }
+  60%  { transform: scale(1.15) translateY(-5px); }
+  80%  { transform: scale(1.25) translateY(-9px); }
+  100% { transform: scale(1.2) translateY(0); }
+}
+
+/* 3. Calm – slow breathe pulse */
+@keyframes calmPulse {
+  0%   { transform: scale(1);    opacity: 1; }
+  50%  { transform: scale(1.18); opacity: 0.85; }
+  100% { transform: scale(1.12); opacity: 1; }
+}
+
+/* 4. Meh – slow side-to-side shrug */
+@keyframes mehShrug {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(-7deg) scale(0.97); }
+  75%  { transform: rotate(7deg) scale(0.97); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* 5. Anxious – rapid micro-jitter */
+@keyframes anxiousShake {
+  0%   { transform: translateX(0) rotate(0deg); }
+  10%  { transform: translateX(-4px) rotate(-2deg); }
+  20%  { transform: translateX(4px) rotate(2deg); }
+  30%  { transform: translateX(-3px) rotate(-1.5deg); }
+  40%  { transform: translateX(3px) rotate(1.5deg); }
+  50%  { transform: translateX(-2px) rotate(-1deg); }
+  60%  { transform: translateX(2px) rotate(1deg); }
+  70%  { transform: translateX(-1px) rotate(-0.5deg); }
+  80%  { transform: translateX(1px) rotate(0.5deg); }
+  90%  { transform: translateX(-1px); }
+  100% { transform: translateX(0) scale(1.08); }
+}
+
+/* 6. Sad – slow droop with desaturation */
+@keyframes sadDroop {
+  0%   { transform: translateY(0) scale(1);    filter: saturate(1); }
+  40%  { transform: translateY(7px) scale(0.96); filter: saturate(0.45); }
+  70%  { transform: translateY(10px) scale(0.93); filter: saturate(0.3); }
+  100% { transform: translateY(8px) scale(0.95); filter: saturate(0.4); }
+}
+
+/* 7. Frustrated – double stamp + quiver */
+@keyframes frustratedStamp {
+  0%   { transform: scale(1) translateY(0); }
+  18%  { transform: scale(1.25) translateY(-10px); }
+  32%  { transform: scale(0.92) translateY(6px); }
+  48%  { transform: scale(1.15) translateY(-6px); }
+  60%  { transform: scale(0.96) translateY(3px); }
+  72%  { transform: scale(1.08) translateY(-2px) rotate(4deg); }
+  84%  { transform: scale(1.04) rotate(-2deg); }
+  100% { transform: scale(1.06) rotate(0deg); }
+}
+
+/* 8. Angry – violent shake with red glow */
+@keyframes angryRage {
+  0%   { transform: scale(1) rotate(0deg);     filter: drop-shadow(0 0 0 transparent); }
+  10%  { transform: scale(1.3) rotate(-12deg); filter: drop-shadow(0 0 8px rgba(220,20,60,0.7)); }
+  25%  { transform: scale(1.35) rotate(12deg); filter: drop-shadow(0 0 14px rgba(220,20,60,0.9)); }
+  40%  { transform: scale(1.28) rotate(-9deg); filter: drop-shadow(0 0 10px rgba(220,20,60,0.8)); }
+  55%  { transform: scale(1.32) rotate(7deg);  filter: drop-shadow(0 0 12px rgba(220,20,60,0.7)); }
+  70%  { transform: scale(1.22) rotate(-4deg); filter: drop-shadow(0 0 6px rgba(220,20,60,0.5)); }
+  85%  { transform: scale(1.18) rotate(2deg);  }
+  100% { transform: scale(1.2) rotate(0deg);   filter: drop-shadow(0 0 4px rgba(220,20,60,0.35)); }
+}
+
+/* ── Apply animation classes ────────────────────────────────────────────── */
+.mood-btn.selected .mood-emoji {
+  animation-duration: 0.6s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+
+.mood-btn.selected[data-mood="ecstatic"]   .mood-emoji { animation-name: ecstaticBounce; }
+.mood-btn.selected[data-mood="happy"]      .mood-emoji { animation-name: happyBounce; }
+.mood-btn.selected[data-mood="calm"]       .mood-emoji { animation-name: calmPulse; animation-duration: 0.9s; animation-timing-function: ease-in-out; }
+.mood-btn.selected[data-mood="meh"]        .mood-emoji { animation-name: mehShrug; animation-duration: 0.55s; }
+.mood-btn.selected[data-mood="anxious"]    .mood-emoji { animation-name: anxiousShake; animation-duration: 0.45s; }
+.mood-btn.selected[data-mood="sad"]        .mood-emoji { animation-name: sadDroop; animation-duration: 0.8s; }
+.mood-btn.selected[data-mood="frustrated"] .mood-emoji { animation-name: frustratedStamp; animation-duration: 0.55s; }
+.mood-btn.selected[data-mood="angry"]      .mood-emoji { animation-name: angryRage; animation-duration: 0.6s; }
+
+/* ── Sentiment bar ──────────────────────────────────────────────────────── */
+.sentiment-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.sentiment-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.sentiment-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: width var(--t-med), left var(--t-med), background var(--t-med);
+}
+.sentiment-score {
+  font-size: 0.82rem;
+  font-weight: 700;
+  min-width: 42px;
+  text-align: right;
+  color: var(--text-secondary);
+}
+.sentiment-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.sentiment-tag {
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.sentiment-tag.positive { background: rgba(120, 200, 0, 0.15); color: #78C800; }
+.sentiment-tag.negative { background: rgba(220, 20, 60, 0.15); color: #FF6B6B; }
+
+/* ── Note textarea ──────────────────────────────────────────────────────── */
+.note-textarea {
+  width: 100%;
+  min-height: 110px;
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 0.93rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  outline: none;
+}
+.note-textarea::placeholder { color: var(--text-muted); }
+.note-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 106, 247, 0.15);
+}
+
+/* ── Char counter ───────────────────────────────────────────────────────── */
+.char-counter {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 4px;
+}
+.char-counter.warn { color: #FFA500; }

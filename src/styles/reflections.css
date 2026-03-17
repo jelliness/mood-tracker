@@ -1,0 +1,80 @@
+/* ── Reflection cards ───────────────────────────────────────────────────── */
+.reflection-line {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+.reflection-line + .reflection-line { margin-top: 8px; }
+.reflection-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+/* ── Stats row ──────────────────────────────────────────────────────────── */
+.refl-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.refl-stat {
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 16px 12px;
+  text-align: center;
+}
+.refl-stat-val {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.refl-stat-lbl {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+/* ── No data ────────────────────────────────────────────────────────────── */
+.refl-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+.refl-empty-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+/* ── Trend indicator ────────────────────────────────────────────────────── */
+.trend-up   { color: #78C800; }
+.trend-down { color: #FF6347; }
+.trend-flat { color: var(--text-secondary); }
+
+/* ── Best/Low day cards ─────────────────────────────────────────────────── */
+.day-highlight {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.day-highlight + .day-highlight { margin-top: 8px; }
+.day-hi-emoji { font-size: 2rem; flex-shrink: 0; }
+.day-hi-content { flex: 1; min-width: 0; }
+.day-hi-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.day-hi-label { font-weight: 700; }
+.day-hi-note {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}

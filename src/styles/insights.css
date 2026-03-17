@@ -1,0 +1,111 @@
+/* ── Chart containers ───────────────────────────────────────────────────── */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+/* ── Calendar heatmap ───────────────────────────────────────────────────── */
+.cal-grid-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.cal-day-name {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-cell {
+  aspect-ratio: 1;
+  border-radius: 5px;
+  background: var(--surface-2);
+  cursor: default;
+  position: relative;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cal-cell.has-entry {
+  cursor: pointer;
+}
+.cal-cell.has-entry:hover {
+  transform: scale(1.15);
+  z-index: 2;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.cal-cell.empty { opacity: 0; pointer-events: none; }
+.cal-cell-day {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.65);
+  pointer-events: none;
+}
+
+/* Cal tooltip */
+.cal-tooltip {
+  position: fixed;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--t-fast);
+  z-index: 50;
+  max-width: 200px;
+  box-shadow: var(--shadow-card);
+}
+.cal-tooltip.visible { opacity: 1; }
+
+/* ── Word cloud ─────────────────────────────────────────────────────────── */
+.word-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  line-height: 1.8;
+}
+.word-tag {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 1px 6px;
+  cursor: default;
+  transition: opacity var(--t-fast);
+}
+.word-tag:hover { opacity: 0.8; }
+
+/* ── Insight number badges ──────────────────────────────────────────────── */
+.insight-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.insight-badge {
+  flex: 1;
+  min-width: 100px;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+}
+.insight-badge-val {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.insight-badge-lbl {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
