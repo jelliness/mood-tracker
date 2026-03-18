@@ -4,30 +4,39 @@ import { wordFrequency } from '../modules/sentiment.js'
 
 let chartInstance = null
 
-export function renderInsights() {
+export function renderTrendCard() {
   return `
     <div class="card">
       <p class="section-title">30-Day Mood Trend</p>
       <div class="chart-wrap">
         <canvas id="trend-chart"></canvas>
       </div>
-    </div>
+    </div>`
+}
 
-    <div class="card" style="margin-top:20px;">
+export function renderCalendarCard() {
+  return `
+    <div class="card">
       <p class="section-title">This Month</p>
       <div class="cal-grid-header" id="cal-header"></div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-tooltip" id="cal-tooltip"></div>
-    </div>
+    </div>`
+}
 
-    <div class="card" style="margin-top:20px;">
+export function renderWordCloudCard() {
+  return `
+    <div class="card">
       <p class="section-title">Your Emotional Keywords</p>
       <div class="word-cloud" id="word-cloud"></div>
       <p id="word-cloud-empty" style="color:var(--text-muted);font-size:0.88rem;display:none;">
         Write notes on your mood entries to see your emotional vocabulary here.
       </p>
-    </div>
-  `
+    </div>`
+}
+
+export function renderInsights() {
+  return renderTrendCard() + renderCalendarCard() + renderWordCloudCard()
 }
 
 export async function initInsights() {
@@ -200,7 +209,7 @@ function buildCalendar() {
   gridEl.addEventListener('mouseleave', () => tooltipEl?.classList.remove('visible'))
 }
 
-// ── Word cloud ─────────────────────────────────────────────────────────────
+// ── Word cloud (SVG spiral layout) ─────────────────────────────────────────
 function buildWordCloud() {
   const entries = getLast30Entries()
   const cloudEl = document.getElementById('word-cloud')
@@ -214,19 +223,111 @@ function buildWordCloud() {
     return
   }
 
+  const W = 520
+  const H = 300
+  const PAD = 5
+  const isLight = document.documentElement.dataset.theme === 'light'
+
   const maxCount = words[0].count
   const minCount = words[words.length - 1].count
 
-  cloudEl.innerHTML = words.map(({ word, count, sentimentAvg }) => {
-    const ratio = maxCount === minCount ? 1 : (count - minCount) / (maxCount - minCount)
-    const fontSize = 0.75 + ratio * 1.35
-    const alpha = 0.5 + ratio * 0.5
+  // Measure text with an off-screen canvas
+  const mc  = document.createElement('canvas')
+  const mctx = mc.getContext('2d')
 
+  // Build descriptors (sorted largest → smallest so biggest lands at centre)
+  const items = words.map(({ word, count, sentimentAvg }) => {
+    const ratio    = maxCount === minCount ? 1 : (count - minCount) / (maxCount - minCount)
+    const fontSize = Math.round(10 + ratio * 28)            // 10 – 38 px
+    const weight   = ratio > 0.6 ? '800' : ratio > 0.3 ? '600' : '500'
+    // Only rotate smaller words, randomly
+    const rotate   = ratio < 0.3 && Math.random() < 0.45 ? -90 : 0
+
+    mctx.font = `${weight} ${fontSize}px Segoe UI, system-ui, sans-serif`
+    const tw = mctx.measureText(word).width
+    const th = fontSize * 1.15
+
+    // Bounding box in screen coords (swap when rotated)
+    const bw = rotate === 0 ? tw + 8 : th + 4
+    const bh = rotate === 0 ? th + 4 : tw + 8
+
+    // Colour by sentiment
     let color
-    if (sentimentAvg > 0.5) color = `rgba(120,200,0,${alpha})`
-    else if (sentimentAvg < -0.5) color = `rgba(255,99,71,${alpha})`
-    else color = `rgba(144,144,176,${alpha})`
+    if      (sentimentAvg >  0.4) color = isLight ? '#3a9e55' : '#6BCB77'
+    else if (sentimentAvg < -0.4) color = isLight ? '#cc4444' : '#FF7070'
+    else                          color = isLight ? '#6b58f0' : '#a09cc8'
 
-    return `<span class="word-tag" style="font-size:${fontSize}rem;color:${color};" title="${count} uses">${word}</span>`
-  }).join('')
+    // Dim less-frequent words slightly
+    const opacity = 0.55 + ratio * 0.45
+
+    return { word, count, ratio, fontSize, weight, rotate, bw, bh, color, opacity }
+  })
+
+  // ── Archimedean spiral placement ───────────────────────────────────────
+  const placed = []
+  const cx = W / 2
+  const cy = H / 2
+  // Random starting angle so each render feels different
+  const startAngle = Math.random() * Math.PI * 2
+
+  for (const item of items) {
+    let found = false
+    for (let t = 0; t < 400; t += 0.12) {
+      const r     = 3.2 * t
+      const angle = startAngle + t
+      const x     = cx + r * Math.cos(angle) - item.bw / 2
+      const y     = cy + r * Math.sin(angle) - item.bh / 2
+
+      // Stay inside viewBox
+      if (x < PAD || x + item.bw > W - PAD || y < PAD || y + item.bh > H - PAD) continue
+
+      // AABB collision check
+      let ok = true
+      for (const p of placed) {
+        if (x          < p.x + p.bw + PAD &&
+            x + item.bw > p.x - PAD        &&
+            y          < p.y + p.bh + PAD &&
+            y + item.bh > p.y - PAD) { ok = false; break }
+      }
+
+      if (ok) { placed.push({ ...item, x, y }); found = true; break }
+    }
+
+    // Last-resort random drop (avoids complete loss of a word)
+    if (!found) {
+      for (let a = 0; a < 60; a++) {
+        const x = PAD + Math.random() * (W - item.bw - PAD * 2)
+        const y = PAD + Math.random() * (H - item.bh - PAD * 2)
+        let ok = true
+        for (const p of placed) {
+          if (x < p.x + p.bw + PAD && x + item.bw > p.x - PAD &&
+              y < p.y + p.bh + PAD && y + item.bh > p.y - PAD) { ok = false; break }
+        }
+        if (ok) { placed.push({ ...item, x, y }); break }
+      }
+    }
+  }
+
+  // ── Render SVG ────────────────────────────────────────────────────────
+  const svgWords = placed.map(({ word, x, y, bw, bh, fontSize, weight, rotate, color, opacity, count }, idx) => {
+    const tx = (x + bw / 2).toFixed(1)
+    const ty = (y + bh / 2).toFixed(1)
+    const xform = rotate !== 0 ? `rotate(${rotate} ${tx} ${ty})` : ''
+    return `<text
+      x="${tx}" y="${ty}"
+      font-size="${fontSize}" font-weight="${weight}"
+      fill="${color}" opacity="${opacity.toFixed(2)}"
+      text-anchor="middle" dominant-baseline="central"
+      ${xform ? `transform="${xform}"` : ''}
+      class="cloud-word"
+      style="animation-delay:${(idx * 28)}ms"
+    ><title>${word} — ${count} use${count !== 1 ? 's' : ''}</title>${word}</text>`
+  }).join('\n    ')
+
+  cloudEl.innerHTML = `
+    <svg class="word-cloud-svg" viewBox="0 0 ${W} ${H}"
+         xmlns="http://www.w3.org/2000/svg"
+         role="img" aria-label="Emotional keywords word cloud">
+      ${svgWords}
+    </svg>`
 }

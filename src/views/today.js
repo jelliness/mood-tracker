@@ -48,32 +48,26 @@ export function renderToday() {
       </div>
 
       <div class="mood-face-wrap">
-        <!-- Face circle: shows emoji normally, live video when camera is on -->
-        <div class="mood-face-circle" id="mood-face-circle">
-          <span class="mood-face-emoji" id="mood-face-emoji">😶</span>
-          <video id="today-cam-video" class="face-cam-video" autoplay playsinline muted></video>
-
-          <!-- Loading overlay while camera/models boot -->
-          <div class="face-cam-overlay" id="face-cam-overlay">
-            <span class="face-cam-spinner" id="face-cam-spinner">⏳</span>
+        <!-- Outer: positions the FAB relative to the circle -->
+        <div class="mood-face-outer">
+          <div class="mood-face-circle" id="mood-face-circle">
+            <span class="mood-face-emoji" id="mood-face-emoji">😶</span>
+            <video id="today-cam-video" class="face-cam-video" autoplay playsinline muted></video>
+            <div class="face-cam-overlay" id="face-cam-overlay">
+              <span id="face-cam-spinner">⏳</span>
+            </div>
+            <div class="face-cam-badge" id="face-cam-badge"></div>
           </div>
-
-          <!-- Detected mood badge (bottom-right of circle) -->
-          <div class="face-cam-badge" id="face-cam-badge"></div>
+          <!-- Camera FAB clipped to circle edge -->
+          <button class="btn-cam-toggle" id="btn-cam-toggle"
+                  aria-pressed="false" title="Detect with camera">📷</button>
         </div>
 
-        <p class="mood-face-hint" id="mood-face-hint">Tap a mood below</p>
-        <p class="mood-face-label" id="mood-face-label"></p>
-
-        <!-- Camera toggle -->
-        <button class="btn-cam-toggle" id="btn-cam-toggle" aria-pressed="false">
-          <span class="cam-toggle-icon">📷</span>
-          <span class="cam-toggle-text">Detect with camera</span>
-        </button>
+        <!-- Single status line: hint OR selected mood name -->
+        <p class="mood-status-text" id="mood-status-text">Tap a mood below</p>
       </div>
 
       <div class="mood-selector-wrap">
-        <div class="mood-selector-pill" id="mood-selector-pill">Slide to select a mood</div>
         <div class="mood-buttons-row" id="mood-buttons-row" role="radiogroup" aria-label="Mood selection">
           ${moodButtons}
         </div>
@@ -178,23 +172,21 @@ function selectMoodByIndex(idx, playSound) {
 }
 
 function updateFaceDisplay(mood) {
-  const circle  = document.getElementById('mood-face-circle')
-  const emojiEl = document.getElementById('mood-face-emoji')
-  const hintEl  = document.getElementById('mood-face-hint')
-  const labelEl = document.getElementById('mood-face-label')
+  const circle   = document.getElementById('mood-face-circle')
+  const emojiEl  = document.getElementById('mood-face-emoji')
+  const statusEl = document.getElementById('mood-status-text')
 
-  if (circle)  circle.style.setProperty('--face-bg', mood.color)
+  if (circle) circle.style.setProperty('--face-bg', mood.color)
   if (emojiEl) {
     emojiEl.textContent = mood.emoji
     emojiEl.className   = 'mood-face-emoji'
     void emojiEl.offsetWidth
     emojiEl.classList.add(`center-anim-${mood.id}`)
   }
-  if (hintEl)  hintEl.style.display = 'none'
-  if (labelEl) {
-    labelEl.textContent   = mood.label
-    labelEl.style.color   = mood.color
-    labelEl.style.display = 'block'
+  if (statusEl) {
+    statusEl.textContent = mood.label
+    statusEl.style.color = mood.color
+    statusEl.classList.add('has-mood')
   }
 }
 
@@ -208,12 +200,11 @@ function initCameraToggle() {
 }
 
 async function openTodayCamera() {
-  const circle   = document.getElementById('mood-face-circle')
-  const videoEl  = document.getElementById('today-cam-video')
-  const overlay  = document.getElementById('face-cam-overlay')
-  const spinner  = document.getElementById('face-cam-spinner')
+  const circle    = document.getElementById('mood-face-circle')
+  const videoEl   = document.getElementById('today-cam-video')
+  const overlay   = document.getElementById('face-cam-overlay')
+  const spinner   = document.getElementById('face-cam-spinner')
   const toggleBtn = document.getElementById('btn-cam-toggle')
-  const pill     = document.getElementById('mood-selector-pill')
 
   if (!circle || !videoEl) return
 
@@ -221,11 +212,7 @@ async function openTodayCamera() {
   overlay.style.display = 'flex'
   spinner.textContent   = '⏳'
   toggleBtn?.setAttribute('aria-pressed', 'true')
-  if (toggleBtn) {
-    toggleBtn.querySelector('.cam-toggle-icon').textContent = '✕'
-    toggleBtn.querySelector('.cam-toggle-text').textContent = 'Stop camera'
-  }
-  if (pill) pill.textContent = 'Look at the camera…'
+  if (toggleBtn) toggleBtn.textContent = '✕'
 
   camStableCount = 0
   lastCamMoodId  = null
@@ -268,18 +255,12 @@ function closeTodayCamera() {
   const overlay   = document.getElementById('face-cam-overlay')
   const badge     = document.getElementById('face-cam-badge')
   const toggleBtn = document.getElementById('btn-cam-toggle')
-  const pill      = document.getElementById('mood-selector-pill')
 
   circle?.classList.remove('cam-active')
-  if (overlay) overlay.style.display = 'none'
-  if (videoEl) { videoEl.srcObject = null }
-  if (badge)   { badge.textContent = ''; badge.style.display = 'none' }
-  if (toggleBtn) {
-    toggleBtn.setAttribute('aria-pressed', 'false')
-    toggleBtn.querySelector('.cam-toggle-icon').textContent = '📷'
-    toggleBtn.querySelector('.cam-toggle-text').textContent = 'Detect with camera'
-  }
-  if (pill) pill.textContent = 'Slide to select a mood'
+  if (overlay)   overlay.style.display = 'none'
+  if (videoEl)   videoEl.srcObject = null
+  if (badge)     { badge.textContent = ''; badge.style.display = 'none' }
+  if (toggleBtn) { toggleBtn.setAttribute('aria-pressed', 'false'); toggleBtn.textContent = '📷' }
 
   // Clear camera-preview states from mood buttons
   document.querySelectorAll('.mood-btn.camera-preview').forEach((btn) => {
