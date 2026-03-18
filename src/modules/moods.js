@@ -1,11 +1,12 @@
+// Rainbow-ordered for the mood wheel (left → right: red → pink)
 export const MOODS = [
   {
     id: 'ecstatic',
     emoji: '🤩',
     label: 'Ecstatic',
-    color: '#FFD700',
-    darkColor: '#B8960C',
-    bgGradient: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)',
+    color: '#FF5F6D',        // red
+    darkColor: '#CC2030',
+    bgGradient: 'linear-gradient(135deg, #FF5F6D 0%, #CC2030 100%)',
     score: 4,
     animClass: 'anim-ecstatic',
     audioConfig: {
@@ -20,9 +21,9 @@ export const MOODS = [
     id: 'happy',
     emoji: '😊',
     label: 'Happy',
-    color: '#78C800',
-    darkColor: '#4A7B00',
-    bgGradient: 'linear-gradient(135deg, #78C800 0%, #40A000 100%)',
+    color: '#FF9F43',        // orange
+    darkColor: '#CC6600',
+    bgGradient: 'linear-gradient(135deg, #FF9F43 0%, #CC6600 100%)',
     score: 3,
     animClass: 'anim-happy',
     audioConfig: {
@@ -37,9 +38,9 @@ export const MOODS = [
     id: 'calm',
     emoji: '😌',
     label: 'Calm',
-    color: '#00BFFF',
-    darkColor: '#007AA8',
-    bgGradient: 'linear-gradient(135deg, #00BFFF 0%, #0077CC 100%)',
+    color: '#FFD93D',        // yellow
+    darkColor: '#B89800',
+    bgGradient: 'linear-gradient(135deg, #FFD93D 0%, #B89800 100%)',
     score: 2,
     animClass: 'anim-calm',
     audioConfig: {
@@ -54,9 +55,9 @@ export const MOODS = [
     id: 'meh',
     emoji: '😐',
     label: 'Meh',
-    color: '#A0A0A0',
-    darkColor: '#606060',
-    bgGradient: 'linear-gradient(135deg, #A0A0A0 0%, #707070 100%)',
+    color: '#6BCB77',        // green
+    darkColor: '#3A9A45',
+    bgGradient: 'linear-gradient(135deg, #6BCB77 0%, #3A9A45 100%)',
     score: 0,
     animClass: 'anim-meh',
     audioConfig: {
@@ -71,9 +72,9 @@ export const MOODS = [
     id: 'anxious',
     emoji: '😰',
     label: 'Anxious',
-    color: '#FFA500',
-    darkColor: '#B36B00',
-    bgGradient: 'linear-gradient(135deg, #FFA500 0%, #CC6600 100%)',
+    color: '#4D96FF',        // blue
+    darkColor: '#1155CC',
+    bgGradient: 'linear-gradient(135deg, #4D96FF 0%, #1155CC 100%)',
     score: -1,
     animClass: 'anim-anxious',
     audioConfig: {
@@ -88,9 +89,9 @@ export const MOODS = [
     id: 'sad',
     emoji: '😢',
     label: 'Sad',
-    color: '#6495ED',
-    darkColor: '#2B5CE6',
-    bgGradient: 'linear-gradient(135deg, #6495ED 0%, #3355AA 100%)',
+    color: '#6C5CE7',        // indigo
+    darkColor: '#3922CC',
+    bgGradient: 'linear-gradient(135deg, #6C5CE7 0%, #3922CC 100%)',
     score: -2,
     animClass: 'anim-sad',
     audioConfig: {
@@ -105,9 +106,9 @@ export const MOODS = [
     id: 'frustrated',
     emoji: '😤',
     label: 'Frustrated',
-    color: '#FF6347',
-    darkColor: '#CC2200',
-    bgGradient: 'linear-gradient(135deg, #FF6347 0%, #CC2200 100%)',
+    color: '#C77DFF',        // violet
+    darkColor: '#8822CC',
+    bgGradient: 'linear-gradient(135deg, #C77DFF 0%, #8822CC 100%)',
     score: -3,
     animClass: 'anim-frustrated',
     audioConfig: {
@@ -122,9 +123,9 @@ export const MOODS = [
     id: 'angry',
     emoji: '😡',
     label: 'Angry',
-    color: '#DC143C',
-    darkColor: '#8B0000',
-    bgGradient: 'linear-gradient(135deg, #DC143C 0%, #8B0000 100%)',
+    color: '#FF78C4',        // pink
+    darkColor: '#CC3388',
+    bgGradient: 'linear-gradient(135deg, #FF78C4 0%, #CC3388 100%)',
     score: -4,
     animClass: 'anim-angry',
     audioConfig: {
