@@ -1,6 +1,5 @@
 import { renderToday, initToday } from './views/today.js'
-import { renderInsights, initInsights } from './views/insights.js'
-import { renderJar, initJar } from './views/jar.js'
+import { renderDashboard, initDashboard } from './views/dashboard.js'
 import { renderReflections, initReflections } from './views/reflections.js'
 import { renderCamera, initCamera, cleanupCamera } from './views/camera.js'
 import { stopCamera } from './modules/camera.js'
@@ -10,8 +9,7 @@ import { generateInsights } from './modules/insights.js'
 // ── View registry ─────────────────────────────────────────────────────────
 const VIEWS = {
   today:       { render: renderToday,       init: initToday },
-  insights:    { render: renderInsights,    init: initInsights },
-  jar:         { render: renderJar,         init: initJar },
+  dashboard:   { render: renderDashboard,   init: initDashboard },
   reflections: { render: renderReflections, init: initReflections },
   camera:      { render: renderCamera,      init: initCamera },
 }
@@ -24,6 +22,7 @@ function activateTab(tab) {
   if (activeTab === 'camera') cleanupCamera()
   if (activeTab === 'today') stopCamera()
   activeTab = tab
+  document.documentElement.dataset.view = tab
 
   // Update tab buttons
   document.querySelectorAll('.tab-btn').forEach((btn) => {
