@@ -4,12 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MoodJar</title>
+  <!-- Apply saved theme before CSS paint to avoid flash -->
+  <script>
+    try {
+      const s = localStorage.getItem('moodjar_settings')
+      const theme = s ? (JSON.parse(s).theme ?? 'light') : 'light'
+      if (theme === 'light') document.documentElement.dataset.theme = 'light'
+    } catch { document.documentElement.dataset.theme = 'light' }
+  </script>
   <link rel="stylesheet" href="/src/styles/base.css" />
   <link rel="stylesheet" href="/src/styles/layout.css" />
   <link rel="stylesheet" href="/src/styles/moods.css" />
   <link rel="stylesheet" href="/src/styles/jar.css" />
   <link rel="stylesheet" href="/src/styles/insights.css" />
   <link rel="stylesheet" href="/src/styles/reflections.css" />
+  <link rel="stylesheet" href="/src/styles/camera.css" />
 </head>
 <body>
   <div id="app">
@@ -36,7 +45,19 @@
             <span class="tab-icon">💭</span>
             <span class="tab-label">Reflections</span>
           </button>
+          <button class="tab-btn" data-tab="camera" role="tab" aria-selected="false">
+            <span class="tab-icon">📸</span>
+            <span class="tab-label">Camera</span>
+          </button>
         </nav>
+        <div class="header-controls">
+          <div id="streak-badge" class="streak-badge" title="Current logging streak" aria-label="Current streak">
+            <span class="streak-icon">🔥</span>
+            <span id="streak-count">0</span>
+            <span class="streak-label">day streak</span>
+          </div>
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle light/dark theme" title="Toggle theme">🌙</button>
+        </div>
       </div>
     </header>
 
@@ -45,6 +66,7 @@
       <div id="view-insights" class="view"></div>
       <div id="view-jar" class="view"></div>
       <div id="view-reflections" class="view"></div>
+      <div id="view-camera" class="view"></div>
     </main>
 
     <div id="toast" class="toast" aria-live="polite"></div>

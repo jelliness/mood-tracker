@@ -71,8 +71,8 @@ export function saveSettings(patch) {
   writeJSON(SETTINGS_KEY, { ...getSettings(), ...patch })
 }
 
-export function buildEntry({ mood, moodScore, note, sentimentScore, keywords }) {
+export function buildEntry({ mood, moodScore, note, sentimentScore, keywords, source = 'manual' }) {
   const now = new Date()
   const id = now.toISOString().slice(0, 10)
-  return { id, date: id, mood, moodScore, note, sentimentScore, keywords, savedAt: now.getTime() }
+  return { id, date: id, mood, moodScore, note, sentimentScore, keywords, source, savedAt: now.getTime() }
 }
